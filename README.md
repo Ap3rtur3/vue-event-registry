@@ -37,9 +37,10 @@ The property names of both event registries can be customized.
 Registries will not be added to vue if `false` is given instead of a string.
 
 ```javascript
+// Example with custom event registry names
 Vue.use(VueEventRegistry, {
     name: '$userEvents',
-    uniqueName: '$daytimeEvents',
+    uniqueName: '$achievements',
 });
 ```
 
