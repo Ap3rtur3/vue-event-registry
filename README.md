@@ -53,13 +53,13 @@ Both event registries provide following functions:
 
 #### on(event, handler)
 Registers event handler and returns function to unregister it
-* event: Name of event to listen for _(Type: String, Default: '$events')_
+* event: Name of event _(Type: String)_
 * handler: Event handler _(Type: Function)_
 
 #### emit(event, ...args)
 Emits event and executes registered handlers
 * event: Name of event _(Type: String)_
-* args: Optional arguments passed to event handler
+* args: Optional arguments which get passed to event handler
 
 #### history()
 Returns array of all registry interactions
