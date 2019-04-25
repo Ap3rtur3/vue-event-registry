@@ -1,0 +1,28 @@
+{
+  "name": "vue-event-registry",
+  "version": "1.0.0",
+  "description": "Register, execute und unregister event handlers",
+  "main": "index.js",
+  "author": "Marcel Solle <msap3rtur3@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ap3rtur3/vue-event-registry.git"
+  },
+  "keywords": [
+    "vue",
+    "event",
+    "registry",
+    "unique"
+  ],
+  "bugs": {
+    "url": "https://github.com/Ap3rtur3/vue-event-registry/issues"
+  },
+  "homepage": "https://github.com/Ap3rtur3/vue-event-registry#readme",
+  "devDependencies": {
+    "jest": "^24.7.1"
+  }
+}
