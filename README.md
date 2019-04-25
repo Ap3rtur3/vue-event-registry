@@ -45,7 +45,7 @@ Vue.use(VueEventRegistry, {
 
 ## Usage
 
-After setup all vue instances have access to the configured event registries.
+After the setup all vue instances have access to the configured event registries.
 With default configuration the registries are accessible from within vue components under 
 `this.$events` and `this.$uniqueEvents`.
 
@@ -58,8 +58,8 @@ Registers event handler and returns function to unregister it
 
 #### emit(event, ...args)
 Emits event and executes registered handlers
-* event: Name of event _(Type: String, Default: '$events')_
-* args: Optional arguments 
+* event: Name of event _(Type: String)_
+* args: Optional arguments passed to event handler
 
 #### history()
 Returns array of all registry interactions
@@ -131,7 +131,7 @@ export default {
 
 ## Development 
 
-If you want to contribute, fork and checkout the repository.
+If you want to contribute, then fork and checkout the repository.
 Navigate to local files and install dev dependencies:
 
 ```bash
