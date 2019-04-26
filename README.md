@@ -6,9 +6,16 @@ You can also register handlers for unique events, which get called instantly aft
 if the event was already emitted.
 It doesn't matter when a component is loaded, its unique event handlers get fired properly.
 
+### Why
+
+The main purpose of this plugin is to handle events between independent application modules or components, 
+which get loaded at different times. I wanted a way to handle events from another module, even though they already
+have been emitted, that's what the unique event registry is for.
+
 ### Features
 
 * Easily add and remove event handlers
+* Lightweight
 * Zero dependencies
 * Supports asynchronous registration of unique events
 
@@ -44,6 +51,16 @@ Vue.use(VueEventRegistry, {
 });
 ```
 
+#### Custom event registries
+
+You can create more event registries, by importing the factory function.
+
+```javascript
+import VueEventRegistry, { createEventRegistry } from 'vue-event-registry';
+
+window.eventRegistry = createEventRegistry();
+```
+
 ## Usage
 
 After the setup all vue instances have access to the configured event registries.
@@ -69,6 +86,8 @@ Returns array of all registry interactions
 
 ##### Listen for events 
 
+Register event handlers.
+
 ```javascript
 export default {
     created() {
@@ -87,6 +106,8 @@ export default {
 
 ##### Emit events 
 
+Emit events and optionally pass parameters to event handlers.
+
 ```javascript
 export default {
     created() {
@@ -101,6 +122,9 @@ export default {
 
 ##### Remove event handlers
 
+Remove event handlers by calling the function returned by `on()`.
+If you do not call this function, then event handlers will get executed, even if the component is already destroyed.
+
 ```javascript
 export default {
     created() {
@@ -113,6 +137,8 @@ export default {
 ```
 
 ##### Unique events
+
+Unique events will be persisted until the page is reloaded and a new vue root instance is created.
 
 ```javascript
 export default {
@@ -139,8 +165,16 @@ Navigate to local files and install dev dependencies:
 npm install
 ```
 
-Please create tests for each functionality and run them with:
+Create tests for each functionality and run them with:
 
 ```bash
 npm run test
 ```
+
+Push your changes to a feature branch and create a pull request.
+
+## Todo 
+
+* More examples, Clarify use cases
+* Typescript definitions
+* More tests
