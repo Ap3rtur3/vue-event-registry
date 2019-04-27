@@ -1,6 +1,6 @@
 {
   "name": "vue-event-registry",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Register, execute und unregister event handlers",
   "main": "index.js",
   "author": "Marcel Solle <msap3rtur3@gmail.com>",

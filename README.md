@@ -15,7 +15,7 @@ have been emitted, that's what the unique event registry is for.
 ### Features
 
 * Easily add and remove event handlers
-* Lightweight
+* Lightweight (< 4kb size)
 * Zero dependencies
 * Supports asynchronous registration of unique events
 
@@ -59,7 +59,12 @@ You can create more event registries, by importing the factory function.
 import VueEventRegistry, { createEventRegistry } from 'vue-event-registry';
 
 window.eventRegistry = createEventRegistry();
+window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 ```
+
+#### createEventRegistry(options)
+Returns newly created event registry
+* options: Optional registry config _(Type: Object)_
 
 ## Usage
 
@@ -165,6 +170,7 @@ Navigate to local files and install dev dependencies:
 npm install
 ```
 
+Jest is used as testing framework.
 Create tests for each functionality and run them with:
 
 ```bash
