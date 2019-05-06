@@ -44,6 +44,11 @@ const createEventRegistry = ({
 
     // Registers event handler and returns function to remove it from event handlers
     const on = (event, handler) => {
+        if (typeof handler !== 'function') {
+            debug && log(`Registered handler is not a function!`, handler);
+            return;
+        }
+
         // Add handler
         const handlers = _eventHandlers(event);
         handlers.push(handler);
@@ -56,8 +61,8 @@ const createEventRegistry = ({
         // Execute and return immediately if event is unique and was already emitted
         if (uniqueEvents && _eventWasEmitted(event)) {
             const emitted = _emittedEvents(event);
-            const arguments = (emitted.length > 0) ? emitted[emitted.length - 1] : [];
-            return handler(...arguments);
+            const args = (emitted.length > 0) ? emitted[emitted.length - 1].arguments : [];
+            return handler(...args);
         }
 
         // Return function to remove event handler 
@@ -79,7 +84,7 @@ const createEventRegistry = ({
         // Do nothing if event is unique and was already emitted
         if (uniqueEvents && _eventWasEmitted(event)) {
             if (debug) {
-                console.log(`[Event Registry] Unique event "${event}" was already emitted!`);
+                log(`Unique event "${event}" was already emitted!`);
             }
             return [];
         }
@@ -88,7 +93,7 @@ const createEventRegistry = ({
         const handlers = _eventHandlers(event);
         if (!handlers) {
             if (debug) {
-                console.log(`[Event Registry] No event handlers registered for "${event}"!`);
+                log(`No event handlers registered for "${event}"!`);
             }
             return [];
         }
@@ -108,6 +113,10 @@ const createEventRegistry = ({
         emit,
         history: () => Array.from(history),
     };
+};
+
+const log = (msg, ...args) => {
+    console.log(`[Event Registry] ${msg}`, ...args);
 };
 
 module.exports = {

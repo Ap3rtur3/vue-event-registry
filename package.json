@@ -6,7 +6,8 @@
   "author": "Marcel Solle <msap3rtur3@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "release": "np"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,10 @@
   },
   "homepage": "https://github.com/Ap3rtur3/vue-event-registry#readme",
   "devDependencies": {
-    "jest": "^24.7.1"
+    "jest": "^24.7.1",
+    "np": "^5.0.1"
+  },
+  "np": {
+    "yarn": false
   }
 }

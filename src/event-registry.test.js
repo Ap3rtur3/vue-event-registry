@@ -23,7 +23,6 @@ describe('Event Registry', () => {
 
     it('accepts parameters', done => {
         const arg1 = 1, arg2 = 2;
-
         expect.assertions(2);
         on('event', (a, b) => {
             expect(a).toEqual(arg1);
@@ -34,11 +33,9 @@ describe('Event Registry', () => {
     });
 
     it('unique events only emit once', () => {
-        const unique = createEventRegistry({ uniqueEvents: true });
-        const { on, emit } = unique;
+        const { on, emit } = createEventRegistry({ uniqueEvents: true });
         const handler1 = jestMock.fn();
         const handler2 = jestMock.fn();
-
         emit('event');
         on('event', handler1);
         on('event', handler2);
@@ -49,19 +46,35 @@ describe('Event Registry', () => {
     it('handles unique events (register -> emit)', () => {
         const { on, emit } = createEventRegistry({ uniqueEvents: true });
         const handler = jestMock.fn();
-
         on('event', handler);
         emit('event');
         expect(handler).toHaveBeenCalled();
     });
 
+    it('handles unique events with args (register -> emit)', () => {
+        const { on, emit } = createEventRegistry({ uniqueEvents: true });
+        const handler = jestMock.fn();
+        const arg1 = 1, arg2 = 2;
+        on('event', handler);
+        emit('event', arg1, arg2);
+        expect(handler).toHaveBeenCalledWith(arg1, arg2);
+    });
+
     it('handles unique events (emit -> register)', () => {
         const { on, emit } = createEventRegistry({ uniqueEvents: true });
         const handler = jestMock.fn();
-
         emit('event');
         on('event', handler);
         expect(handler).toHaveBeenCalled();
+    });
+
+    it('handles unique events with args (emit -> register)', () => {
+        const { on, emit } = createEventRegistry({ uniqueEvents: true });
+        const handler = jestMock.fn();
+        const arg1 = 1, arg2 = 2;
+        emit('event', arg1, arg2);
+        on('event', handler);
+        expect(handler).toHaveBeenCalledWith(arg1, arg2);
     });
 
     it('unregisters handlers', () => {
