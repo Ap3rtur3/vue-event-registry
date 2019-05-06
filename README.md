@@ -3,7 +3,7 @@
 Simple Vue plugin to register, emit and unregister global event handlers inside vue components.
 
 You can also register handlers for unique events, which get called instantly after registration, 
-if the event was already emitted.
+if the event was already emitted. Unique events only get emitted once.
 It doesn't matter when a component is loaded, its unique event handlers get fired properly.
 
 ### Why
@@ -66,6 +66,8 @@ window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 #### createEventRegistry(options)
 Returns newly created event registry
 * options: Optional registry config _(Type: Object)_
+  * debug: Enables debug messages _(Type: Boolean, Default: false)_
+  * uniqueEvents: Creates unique event registry _(Type: Boolean, Default: false)_
 
 ## Usage
 
@@ -81,7 +83,7 @@ Registers event handler and returns function to unregister it
 * handler: Event handler _(Type: Function)_
 
 #### emit(event, ...args)
-Emits event and executes registered handlers
+Emits event, executes registered handlers and returns array of executed handlers
 * event: Name of event _(Type: String)_
 * args: Optional arguments which get passed to event handler
 
@@ -97,14 +99,13 @@ Register event handlers.
 ```javascript
 export default {
     created() {
-        // Register event handler
-        this.$events.on('img:loaded', () => {
-            // do stuff
-        });
-        
-        // Register event handler whith parameters
-        this.$events.on('error', (err) => {
-            // handle error
+        // Register handler after async image loading is complete
+        this.$events.on('image:loaded', (image, error) => {
+            if (error) {
+                // Handle error
+            } else {
+                // Do stuff
+            }
         });
     }
 }
@@ -117,10 +118,10 @@ Emit events and optionally pass parameters to event handlers.
 ```javascript
 export default {
     created() {
-        fetch('https://example.com/img').then(() => {
-            this.$events.emit('img:loaded');
-        }).catch((err) => {
-            this.$events.emit('error', err);
+        fetch('https://example.com/img').then((image) => {
+            this.$events.emit('image:loaded', image);
+        }).catch((error) => {
+            this.$events.emit('image:loaded', null, error);
         });
     }
 }
@@ -144,7 +145,7 @@ export default {
 
 ##### Unique events
 
-Unique events will be persisted until the page is reloaded and a new vue root instance is created.
+Unique events can only be emitted once until the page is reloaded and a new vue root instance is created.
 
 ```javascript
 export default {
