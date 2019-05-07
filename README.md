@@ -6,6 +6,9 @@ You can also register handlers for unique events, which get called instantly aft
 if the event was already emitted. Unique events only get emitted once.
 It doesn't matter when a component is loaded, its unique event handlers get fired properly.
 
+Native document events do not execute event handlers registered with `on()`.
+Use `native()` to register event handlers for document events like "click" for example.
+
 ### Why
 
 The main purpose of this plugin is to handle events between independent application modules or components, 
@@ -15,9 +18,10 @@ have been emitted, that's what the unique event registry is for.
 ### Features
 
 * Easily add and remove event handlers
-* Lightweight (\~ 2kb gzipped)
-* Zero dependencies
 * Supports asynchronous registration of unique events
+* Supports native document events
+* Lightweight (\~ 2kb)
+* Zero dependencies
 
 ## Setup
 
@@ -78,9 +82,18 @@ With default configuration the registries are accessible from within vue compone
 Both event registries provide following functions:
 
 #### on(event, handler)
-Registers event handler and returns function to unregister it
+Registers event handler for custom events and returns function to unregister it
 * event: Name of event _(Type: String)_
 * handler: Event handler _(Type: Function)_
+
+#### native(event, handler, target)
+Registers event handler for native events and returns function to unregister it
+* event: Name of event _(Type: String)_
+* handler: Event handler _(Type: Function)_
+* target: Optional html element as event target _(Type: DOMElement, Default: window)_
+
+**Note:** Use `document.dispatchEvent()` to emit registered events.
+If the event target should get removed from the DOM, then its event handlers get removed as well.
 
 #### emit(event, ...args)
 Emits event, executes registered handlers and returns array of executed handlers
