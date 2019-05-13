@@ -67,17 +67,19 @@ window.eventRegistry = createEventRegistry();
 window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 ```
 
-#### createEventRegistry(options)
-Returns newly created event registry
-* options: Optional registry config _(Type: Object)_
-  * debug: Enables debug messages _(Type: Boolean, Default: false)_
-  * uniqueEvents: Creates unique event registry _(Type: Boolean, Default: false)_
-
 ## Usage
 
 After the setup all vue instances have access to the configured event registries.
 With default configuration the registries are accessible from within vue components under 
 `this.$events` and `this.$uniqueEvents`.
+
+The npm package provides following named functions:
+
+#### createEventRegistry(options)
+Returns newly created event registry
+* options: Optional registry config _(Type: Object)_
+  * debug: Enables debug messages _(Type: Boolean, Default: false)_
+  * uniqueEvents: Creates unique event registry _(Type: Boolean, Default: false)_
 
 Both event registries provide following functions:
 
@@ -176,6 +178,28 @@ export default {
 </template>
 ```
 
+##### Native event handlers
+
+Register native document events with `native()`. 
+These get emitted by document events, not the `emit()` function.
+If you want to trigger thos events yourself, use `document.dispatchEvent()`.
+
+```javascript
+export default {
+    created() {
+        // Listen for general click event
+        this.removeClickHandler = this.$events.native('click', () => {});
+        // Listen for mouseover on dom element 
+        const element = document.getElementById('your-id');
+        this.removeMouseoverHandler = this.$events.native('mouseover', () => {}, element);
+    },
+    destroyed() {
+        this.removeClickHandler();
+        this.removeMouseoverHandler();
+    }
+}
+```
+
 ## Development 
 
 If you want to contribute, then fork and checkout the repository.
@@ -196,6 +220,7 @@ Push your changes to a feature branch and create a pull request.
 
 ## Todo 
 
-* More examples, Clarify use cases
+* More examples, More use cases
 * Typescript definitions
 * More tests
+* Promisify
