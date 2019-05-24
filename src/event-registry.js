@@ -4,6 +4,7 @@
  * @param Object config
  * config:
  *      - Bool uniqueEvents: Event handlers only trigger once or instantly if event was already emitted
+ *      - Bool debug: Log debug messages
  */
 const createEventRegistry = ({
     uniqueEvents = false,
@@ -11,9 +12,6 @@ const createEventRegistry = ({
 } = {}) => {
     // Stores handlers for each event
     const registry = new Map();
-
-    // Stores registered native events and functions to unregister them
-    const nativeEvents = new Map();
 
     // Stores history of registry actions
     const history = [];
@@ -57,7 +55,7 @@ const createEventRegistry = ({
 
             if (index > -1) {
                 handlers.splice(index, 1);
-                _pushHistory('unregister', event, handler)
+                _pushHistory('unregister', event, handler);
             }
         };
     };
@@ -75,14 +73,16 @@ const createEventRegistry = ({
             handler(...args);
         };
         target.addEventListener(event, _handler);
-        _pushHistory('on', event, _handler, true)
+        _pushHistory('on', event, _handler, true);
 
         // Return function to remove event handler 
         return () => {
             if (target) {
                 target.removeEventListener(event, _handler);
-                _pushHistory('unregister', event, _handler, [], true);
+            } else {
+                debug && log('DOM element does not exist anymore', event);
             }
+            _pushHistory('unregister', event, _handler, [], true);
         };
     };
 
@@ -107,7 +107,7 @@ const createEventRegistry = ({
             debug && log('Registered handler is not a function!', handler);
             return;
         }
-        
+
         const handlers = _eventHandlers(event);
 
         // Execute and return immediately if event is unique and was already emitted or register if not
@@ -140,7 +140,7 @@ const createEventRegistry = ({
             if (emitted.length === 0) {
                 return _registerNativeHandler(target, event, handler);
             }
-                
+
             const args = emitted[emitted.length - 1].args;
             return handler(...args);
         }
@@ -152,28 +152,68 @@ const createEventRegistry = ({
     const emit = (event, ...args) => {
         // Do nothing if event is unique and was already emitted
         if (uniqueEvents && _eventWasEmitted(event)) {
-            if (debug) {
-                log(`Unique event "${event}" was already emitted!`);
-            }
+            debug && log(`Unique event "${event}" was already emitted!`);
             return [];
         }
-        
+
         // Do nothing if no handlers are registered
         const handlers = _eventHandlers(event);
         if (!handlers) {
-            if (debug) {
-                log(`No event handlers registered for "${event}"!`);
-            }
+            debug && log(`No event handlers registered for "${event}"!`);
             return [];
         }
-        
+
         _pushHistory('emit', event, handlers, args);
         return handlers.map(handler => handler(...args));
     };
 
+    // Returns promise to wait for event
+    const wait = (event, options = {}) => new Promise((resolve, reject) => {
+        let removeHandler;
+        const opts = {
+            timeout: false,
+            resolveOnTimeout: true,
+            ...options,
+            // Disable native option until tests run successful
+            // TODO: Fix waiting for native events
+            native: false, 
+            element: window,
+        };
+        const handler = (...args) => {
+            if (typeof removeHandler === 'function') {
+                removeHandler();
+            }
+            resolve(...args);
+        }
+
+        // Listen for event and resolve promise on emit
+        if (opts.native) {
+            removeHandler = native(event, handler, opts.element);
+        } else {
+            removeHandler = on(event, handler);
+        }
+
+        // Set optional timeout
+        if (typeof opts.timeout === 'number') {
+            setTimeout(() => {
+                if (typeof removeHandler === 'function') {
+                    debug && log(`Timeout while waiting for event "${event}"!`);
+                    removeHandler();
+
+                    if (opts.resolveOnTimeout) {
+                        resolve(null);
+                    } else {
+                        reject(`Timeout while waiting for event "${event}"!`);
+                    }
+                }
+            }, opts.timeout);
+        }
+    });
+
     return {
         on,
         native,
+        wait,
         emit,
         history: () => Array.from(history),
     };

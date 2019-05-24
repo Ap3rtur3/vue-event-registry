@@ -1,25 +1,39 @@
 const jestMock = require('jest-mock');
 const { createEventRegistry } = require('./event-registry');
 
-const simulateClickEvent = (target = document) => {
-    target.dispatchEvent(new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-    }));
+const debug = false;
+
+const simulateClickEvent = (target) => {
+    if (target && target.dispatchEvent) {
+        target.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        }));
+    } else if (debug) {
+        throw Error('Cannot dispatch event on target in simulated click event')
+    }
+};
+
+const createDOMElement = () => {
+    const element = document.createElement('div');
+    document.body.appendChild(element);
+    return element;
 };
 
 describe('Event Registry', () => {
-    let on, emit, history, native, handler;
-    const debug = false;
+    let on, native, wait, emit, history, handler;
 
     beforeEach(() => {
-        ({ on, native, emit, history } = createEventRegistry({ debug }));
+        ({ on, native, wait, emit, history } = createEventRegistry({ debug }));
         handler = jestMock.fn();
+        jest.useFakeTimers();
     });
 
     it('provides functions', () => {
         expect(on).toBeDefined();
+        expect(native).toBeDefined();
+        expect(wait).toBeDefined();
         expect(emit).toBeDefined();
         expect(history).toBeDefined();
     });
@@ -98,16 +112,14 @@ describe('Event Registry', () => {
 
     it('handles native events', () => {
         native('click', handler);
-        simulateClickEvent();
+        simulateClickEvent(document);
         expect(handler).toHaveBeenCalled();
     });
 
     it('handles native events with target', () => {
-        const target = document.createElement('div');
-        const miss = document.createElement('div');
+        const target = createDOMElement();
+        const miss = createDOMElement();
         const handler2 = jestMock.fn();
-        document.body.appendChild(target);
-        document.body.appendChild(miss);
         native('click', handler, target);
         native('click', handler2, miss);
         simulateClickEvent(target);
@@ -118,8 +130,70 @@ describe('Event Registry', () => {
     it('handles native unique events', () => {
         const { native } = createEventRegistry({ uniqueEvents: true, debug });
         native('click', handler);
-        simulateClickEvent();
-        simulateClickEvent();
+        simulateClickEvent(document);
+        simulateClickEvent(document);
         expect(handler).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles promises', () => {
+        const val = 42;
+        expect.assertions(1);
+        wait('event')
+            .then((arg) => {
+                expect(arg).toEqual(val);
+            });
+        emit('event', val);
+    });
+
+    it('handles unique promises', async () => {
+        const { wait, emit } = createEventRegistry({ uniqueEvents: true, debug });
+        const val = 42;
+        expect.assertions(1);
+        emit('event', val);
+        const result = await wait('event');
+        expect(result).toEqual(val);
+    });
+
+    //it('handles native promises', done => {
+    //    const element = createDOMElement();
+    //    wait('click', { native: true, element, timeout: 2000, resolveOnTimeout: false })
+    //        .then(done)
+    //        .catch(() => {
+    //            done.fail('Timeout while waiting for native event');
+    //        });
+    //    setTimeout(() => {
+    //        simulateClickEvent(element);
+    //    }, 1000);
+    //    jest.runAllTimers();
+    //});
+
+    it('resolves promise timeout', () => {
+        const val = 42, result = null;
+        expect.assertions(1);
+        wait('event', { timeout: 1000 })
+            .then((arg) => {
+                expect(arg).toEqual(result);
+            });
+        setTimeout(() => {
+            emit('event', val);
+        }, 2000);
+        jest.runAllTimers();
+    });
+
+    it('rejects promise timeout', done => {
+        const resultType = 'string';
+        expect.assertions(1);
+        wait('event', { timeout: 1000, resolveOnTimeout: false })
+            .then(() => {
+                done.fail('Promise was resolved instead of being rejected');
+            })
+            .catch((err) => {
+                expect(typeof err).toEqual(resultType);
+                done();
+            });
+        setTimeout(() => {
+            emit('event');
+        }, 2000);
+        jest.runAllTimers();
     });
 });
