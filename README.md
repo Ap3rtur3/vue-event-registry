@@ -18,6 +18,7 @@ have been emitted, that's what the unique event registry is for.
 ### Features
 
 * Easily add and remove event handlers
+* Supports promises 
 * Supports asynchronous registration of unique events
 * Supports native document events
 * Lightweight (\~ 2kb)
@@ -67,48 +68,54 @@ window.eventRegistry = createEventRegistry();
 window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 ```
 
+#### createEventRegistry([options])
+Returns newly created event registry
+|Parameters|Type|Default|Description|
+|---|---|---|---|
+|options|object||Optional event registry config|
+|options.debug|boolean|false|Enables debug messages|
+|options.uniqueEvents|boolean|false|Creates registry for unique events|
+
 ## Usage
 
 After the setup all vue instances have access to the configured event registries.
 With default configuration the registries are accessible from within vue components under 
 `this.$events` and `this.$uniqueEvents`.
 
-**The npm package provides following named functions:**
-
-#### createEventRegistry([options])
-Returns newly created event registry
-* options: Optional registry config _(Type: Object)_
-  * debug: Enables debug messages _(Type: Boolean, Default: false)_
-  * uniqueEvents: Creates unique event registry _(Type: Boolean, Default: false)_
-
-
-**Both event registries provide following functions:**
+#### An Event registry provides following functions:
 
 #### on(event, handler)
 Registers event handler for custom events and returns function to unregister it
-* event: Name of event _(Type: String)_
-* handler: Event handler _(Type: Function)_
+|Parameters|Type|Default|Description|
+|---|---|---|---|
+|event|string|_required_|Name of event|
+|handler|function|_required_|Event handler|
 
 #### wait(event[, options])
 Returns promise to wait for given event 
-* event: Name of event _(Type: String)_
-* options: Waiting options _(Type: Object)_
-  * timeout: Time in milliseconds until promise settles, disable with `false` _(Type: Number, Default: false)_
-  * resolveOnTimeout: Controls wether promise is resolved or rejected on timeout _(Type: Boolean, Default: true)_
+|Parameters|Type|Default|Description|
+|---|---|---|---|
+|event|string|_required_|Name of event|
+|options|object||Waiting options|
+|options.timeout|number\|boolean|false|Time in milliseconds until promise settles, disable with `false`|
+|options.resolveOnTimeout|boolean|true|Controls wether promise is resolved or rejected on timeout|
 
 #### native(event, handler[, target])
 Registers event handler for native events and returns function to unregister it
-* event: Name of event _(Type: String)_
-* handler: Event handler _(Type: Function)_
-* target: Optional html element as event target _(Type: DOMElement, Default: window)_
-
+|Parameters|Type|Default|Description|
+|---|---|---|---|
+|event|string|_required_|Name of event|
+|handler|function|_required_|Event handler|
+|target|object|window|Optional html element as event target, needs `addEventListener()` method|
 **Note:** Use `document.dispatchEvent()` to emit registered events.
 If the event target should get removed from the DOM, then its event handlers get removed as well.
 
 #### emit(event[, ...args])
 Emits event, executes registered handlers and returns array of executed handlers
-* event: Name of event _(Type: String)_
-* args: Optional arguments which get passed to event handler
+|Parameters|Type|Default|Description|
+|---|---|---|---|
+|event|string|_required_|Name of event|
+|args|arguments||Optional arguments which get passed to event handler|
 
 #### history()
 Returns array of all registry interactions
@@ -190,14 +197,14 @@ export default {
 
 The function `wait()` will return a promise to wait until the event was emitted.
 In this example component A will stop execution until component B was created.
-Component C will wait for both A and B, or continue without them if they took too long.
+Component C will wait for both A and B, or continue without them if the promise timed out.
 
 ```javascript
 // Component A
 export default {
     async created() {
-        await this.$uniqueEvents.wait('b:created')
-        this.$uniqueEvents.emit('a:created')
+        await this.$uniqueEvents.wait('b:created');
+        this.$uniqueEvents.emit('a:created');
     }
 }
 ```
@@ -205,7 +212,7 @@ export default {
 // Component B
 export default {
     created() {
-        this.$uniqueEvents.emit('b:created')
+        this.$uniqueEvents.emit('b:created');
     }
 }
 ```
@@ -213,9 +220,11 @@ export default {
 // Component C
 export default {
     async created() {
-        await this.$uniqueEvents.wait('a:created', { timeout: 2000 })
-        await this.$uniqueEvents.wait('b:created', { timeout: 2000 })
-        this.$uniqueEvents.emit('c:created')
+        await Promise.all([
+            this.$uniqueEvents.wait('a:created', { timeout: 2000 }),
+            this.$uniqueEvents.wait('b:created', { timeout: 2000 }),
+        ]);
+        this.$uniqueEvents.emit('c:created');
     }
 }
 ```
@@ -265,3 +274,7 @@ Push your changes to a feature branch and create a pull request.
 * More examples, More use cases
 * Typescript definitions
 * More tests
+
+## License
+
+MIT
