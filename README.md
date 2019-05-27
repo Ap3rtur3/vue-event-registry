@@ -70,6 +70,7 @@ window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 
 #### createEventRegistry([options])
 Returns newly created event registry
+
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |options|object||Optional event registry config|
@@ -86,6 +87,7 @@ With default configuration the registries are accessible from within vue compone
 
 #### on(event, handler)
 Registers event handler for custom events and returns function to unregister it
+
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
@@ -93,6 +95,7 @@ Registers event handler for custom events and returns function to unregister it
 
 #### wait(event[, options])
 Returns promise to wait for given event 
+
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
@@ -102,6 +105,7 @@ Returns promise to wait for given event
 
 #### native(event, handler[, target])
 Registers event handler for native events and returns function to unregister it
+
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
@@ -112,6 +116,7 @@ If the event target should get removed from the DOM, then its event handlers get
 
 #### emit(event[, ...args])
 Emits event, executes registered handlers and returns array of executed handlers
+
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
