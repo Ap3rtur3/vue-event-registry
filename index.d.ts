@@ -1,8 +1,24 @@
+type RemoveEventListenerCallback = () => void;
+type ErrorMessage = string;
 
-declare module 'vue-event-registry' {
-    interface EventRegistryFactoryInterface {
-        
-    }
-    export function createEventRegistry(options?: EventRegistryFactoryInterface)
+export default interface EventRegistryPluginInterface {
+    name?: string;
+    uniqueName?: string;
 }
+
+interface EventRegistryFactoryInterface {
+    uniqueEvents?: boolean;
+    debug?: boolean;
+}
+
+export interface EventRegistry {
+    on(event: string, handler: Function): RemoveEventListenerCallback;
+    native(event: string, handler: Function, target?: EventTarget): RemoveEventListenerCallback;
+    wait(event: string, handler: Function): Promise<any | ErrorMessage>;
+    emit(event: string, ...args: any): Array<any>;
+    history(): Array<object>;
+}
+
+export function createEventRegistry(options?: EventRegistryFactoryInterface): EventRegistry;
+
 

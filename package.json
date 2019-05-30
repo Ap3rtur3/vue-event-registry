@@ -3,7 +3,7 @@
   "version": "1.2.2",
   "description": "Register, execute und unregister event handlers",
   "main": "dist/index.js",
-  "types": "index.js",
+  "types": "index.d.ts",
   "author": "Marcel Solle <msap3rtur3@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -19,6 +19,7 @@
     "vue",
     "event",
     "registry",
+    "promise",
     "unique"
   ],
   "bugs": {

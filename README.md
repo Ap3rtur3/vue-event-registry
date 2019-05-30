@@ -100,7 +100,7 @@ Returns promise to wait for given event
 |---|---|---|---|
 |event|string|_required_|Name of event|
 |options|object||Waiting options|
-|options.timeout|number\|boolean|false|Time in milliseconds until promise settles, disable with `false`|
+|options.timeout|number \| boolean|false|Time in milliseconds until promise settles, disable with `false`|
 |options.resolveOnTimeout|boolean|true|Controls wether promise is resolved or rejected on timeout|
 
 #### native(event, handler[, target])
@@ -110,7 +110,8 @@ Registers event handler for native events and returns function to unregister it
 |---|---|---|---|
 |event|string|_required_|Name of event|
 |handler|function|_required_|Event handler|
-|target|object|window|Optional html element as event target, needs `addEventListener()` method|
+|target|EventTarget|window|Optional event target, needs `addEventListener()` method|
+
 **Note:** Use `document.dispatchEvent()` to emit registered events.
 If the event target should get removed from the DOM, then its event handlers get removed as well.
 
@@ -120,7 +121,7 @@ Emits event, executes registered handlers and returns array of executed handlers
 |Parameters|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
-|args|arguments||Optional arguments which get passed to event handler|
+|args|arguments|Optional arguments which get passed to event handler|
 
 #### history()
 Returns array of all registry interactions
@@ -238,7 +239,7 @@ export default {
 
 Register native document events with `native()`. 
 These get emitted by document events, not the `emit()` function.
-If you want to trigger thos events yourself, use `document.dispatchEvent()`.
+If you want to trigger those events yourself, use `document.dispatchEvent()`.
 
 ```javascript
 export default {
