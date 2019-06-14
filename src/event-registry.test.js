@@ -11,7 +11,7 @@ const simulateClickEvent = (target) => {
             view: window
         }));
     } else if (debug) {
-        throw Error('Cannot dispatch event on target in simulated click event')
+        throw Error('Cannot dispatch event on target in simulated click event');
     }
 };
 
@@ -145,13 +145,14 @@ describe('Event Registry', () => {
         emit('event', val);
     });
 
-    it('handles unique promises', async () => {
+    it('handles unique promises', () => {
         const { wait, emit } = createEventRegistry({ uniqueEvents: true, debug });
         const val = 42;
         expect.assertions(1);
         emit('event', val);
-        const result = await wait('event');
-        expect(result).toEqual(val);
+        wait('event').then(result => {
+            expect(result).toEqual(val);
+        });
     });
 
     //it('handles native promises', done => {
