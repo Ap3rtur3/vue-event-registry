@@ -1,6 +1,6 @@
 # Vue Event Registry
 
-Simple Vue plugin to register, emit and unregister global event handlers inside vue components.
+Simple Vue plugin to easily register, emit and unregister global event handlers inside vue components.
 
 You can also register handlers for unique events, which get called instantly after registration, 
 if the event was already emitted. Unique events only get emitted once.
@@ -15,21 +15,30 @@ The main purpose of this plugin is to handle events between independent applicat
 which get loaded at different times. I wanted a way to handle events from another module, even though they already
 have been emitted, that's what the unique event registry is for.
 
+Another core functionality is the way event handlers get removed by calling the remove function, 
+which gets returned by registering an event handler.
+
 ### Features
 
-* Easily add and remove event handlers
-* Supports promises 
-* Supports asynchronous registration of unique events
-* Supports native document events
+* Add and remove event handlers
+* Promises 
+* Asynchronous registration of unique events
+* Native document events
 * Lightweight (\~ 2kb)
 * Zero dependencies
 
 ## Setup
 
-Install npm plugin
+Install with npm:
 
 ```bash
-npm install vue-event-registry
+npm install --save vue-event-registry
+```
+
+Alternatively install with yarn:
+
+```bash
+yarn add vue-event-registry
 ```
 
 Use plugin in Vue
@@ -59,6 +68,7 @@ Vue.use(VueEventRegistry, {
 #### Custom event registries
 
 You can create more event registries, by importing the factory function.
+These registries do not depend on Vue and can be used wherever you want.
 
 ```javascript
 import VueEventRegistry, { createEventRegistry } from 'vue-event-registry';
@@ -71,7 +81,7 @@ window.uniqueEventRegistry = createEventRegistry({ uniqueEvents: true });
 #### createEventRegistry([options])
 Returns newly created event registry
 
-|Parameters|Type|Default|Description|
+|Parameter|Type|Default|Description|
 |---|---|---|---|
 |options|object||Optional event registry config|
 |options.debug|boolean|false|Enables debug messages|
@@ -83,20 +93,20 @@ After the setup all vue instances have access to the configured event registries
 With default configuration the registries are accessible from within vue components under 
 `this.$events` and `this.$uniqueEvents`.
 
-#### An Event registry provides following functions:
+##### An Event registry provides following functions:
 
 #### on(event, handler)
 Registers event handler for custom events and returns function to unregister it
 
-|Parameters|Type|Default|Description|
+|Parameter|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
 |handler|function|_required_|Event handler|
 
 #### wait(event[, options])
-Returns promise to wait for given event 
+Returns promise to wait for given event registered with `on()`
 
-|Parameters|Type|Default|Description|
+|Parameter|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
 |options|object||Waiting options|
@@ -106,7 +116,7 @@ Returns promise to wait for given event
 #### native(event, handler[, target])
 Registers event handler for native events and returns function to unregister it
 
-|Parameters|Type|Default|Description|
+|Parameter|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
 |handler|function|_required_|Event handler|
@@ -118,10 +128,10 @@ If the event target should get removed from the DOM, then its event handlers get
 #### emit(event[, ...args])
 Emits event, executes registered handlers and returns array of executed handlers
 
-|Parameters|Type|Default|Description|
+|Parameter|Type|Default|Description|
 |---|---|---|---|
 |event|string|_required_|Name of event|
-|args|arguments|Optional arguments which get passed to event handler|
+|args|arguments||Optional arguments which get passed to event handler|
 
 #### history()
 Returns array of all registry interactions
@@ -277,9 +287,8 @@ Push your changes to a feature branch and create a pull request.
 
 ## Todo 
 
-* More examples, More use cases
-* Typescript definitions
 * More tests
+* More examples / use cases
 
 ## License
 
