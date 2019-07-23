@@ -192,11 +192,17 @@ export default {
 ##### Unique events
 
 Unique events can only be emitted once until the page is reloaded and a new vue root instance is created.
+The code snippets below can be placed in different application modules.
 
 ```javascript
 export default {
     created() {
-        this.$uniqueEvents.on('user:accepted-cookies', () => {});
+        this.$uniqueEvents.on('user:accepted-cookies', this.createCookies);
+    },
+    methods: {
+        createCookies() {
+            // ...
+        }
     }
 }
 ```

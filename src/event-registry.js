@@ -174,8 +174,9 @@ const createEventRegistry = ({
             timeout: false,
             resolveOnTimeout: true,
             ...options,
-            // Disable native option until tests run successful
+
             // TODO: Fix waiting for native events
+            // Disable native option until tests run successful
             native: false, 
             element: window,
         };
