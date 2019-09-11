@@ -1,11 +1,12 @@
 {
   "name": "vue-event-registry",
-  "version": "1.3.3",
+  "version": "1.3.3-0",
   "description": "Register, execute und unregister event handlers",
   "main": "dist/index.js",
-  "types": "index.d.ts",
+  "types": "src/index.d.ts",
   "author": "Marcel Solle <msap3rtur3@gmail.com>",
   "license": "MIT",
+  "browserslist": ["last 2 versions", "> 0.25%", "IE >= 10"],
   "scripts": {
     "test": "jest",
     "build": "webpack --mode production",

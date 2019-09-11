@@ -1,12 +1,12 @@
 type RemoveEventListenerCallback = () => void;
 type ErrorMessage = string;
 
-export default interface EventRegistryPluginInterface {
+export default interface EventRegistryPlugin {
     name?: string;
     uniqueName?: string;
 }
 
-interface EventRegistryFactoryInterface {
+interface EventRegistryFactory {
     uniqueEvents?: boolean;
     debug?: boolean;
 }
@@ -19,6 +19,6 @@ export interface EventRegistry {
     history(): Array<object>;
 }
 
-export function createEventRegistry(options?: EventRegistryFactoryInterface): EventRegistry;
+export function createEventRegistry(options?: EventRegistryFactory): EventRegistry;
 
 
