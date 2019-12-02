@@ -11,14 +11,19 @@ interface EventRegistryFactory {
     debug?: boolean;
 }
 
+interface WaitOptions {
+    timeout?: number|boolean;
+    resolveOnTimeout?: boolean;
+}
+
 export interface EventRegistry {
     on(event: string, handler: Function): RemoveEventListenerCallback;
     native(event: string, handler: Function, target?: EventTarget): RemoveEventListenerCallback;
-    wait(event: string, handler: Function): Promise<any | ErrorMessage>;
+    wait(event: string, options?: WaitOptions): Promise<any | ErrorMessage>;
     emit(event: string, ...args: any): Array<any>;
     history(): Array<object>;
 }
 
-export function createEventRegistry(options?: EventRegistryFactory): EventRegistry;
+export declare function createEventRegistry(options?: EventRegistryFactory): EventRegistry;
 
 
