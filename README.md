@@ -1,6 +1,9 @@
 # Vue Event Registry
 
-Simple Vue plugin to easily register, emit and unregister global event handlers inside vue components.
+> Simple Vue plugin to easily register, emit and unregister global event handlers inside vue components.
+
+[![NPM](https://img.shields.io/npm/v/vue-event-registry)](https://www.npmjs.com/package/vue-event-registry)
+[![MinZip](https://img.shields.io/bundlephobia/min/vue-event-registry)](https://bundlephobia.com/result?p=vue-event-registry)
 
 You can also register handlers for unique events, which get called instantly after registration, 
 if the event was already emitted. Unique events only get emitted once.
@@ -24,7 +27,6 @@ which gets returned by registering an event handler.
 * Promises 
 * Asynchronous registration of unique events
 * Native document events
-* Lightweight (\~ 2kb)
 * Zero dependencies
 
 ## Setup
