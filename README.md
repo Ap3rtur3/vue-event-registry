@@ -18,6 +18,9 @@ The main purpose of this plugin is to handle events between independent applicat
 which get loaded at different times. I wanted a way to handle events from another module, even though they already
 have been emitted, that's what the unique event registry is for.
 
+Components can also pause execution and wait until some events have been fired or continue without them,
+making it easy to define module execution orders, if they loosely depend on another.
+
 Another core functionality is the way event handlers get removed by calling the remove function, 
 which gets returned by registering an event handler.
 
@@ -93,7 +96,7 @@ Returns newly created event registry
 
 Here are some basic examples on how the event registry can be used:
 
-##### Listen for events 
+#### Listen for events 
 
 Register event handlers.
 
@@ -112,7 +115,7 @@ export default {
 }
 ```
 
-##### Emit events 
+#### Emit events 
 
 Emit events and optionally pass parameters to event handlers.
 
@@ -128,7 +131,7 @@ export default {
 }
 ```
 
-##### Remove event handlers
+#### Remove event handlers
 
 Remove event handlers by calling the function returned by `on()`.
 If you do not call this function, then event handlers will get executed, even if the component is already destroyed.
@@ -144,7 +147,7 @@ export default {
 }
 ```
 
-##### Unique events
+#### Unique events
 
 Unique events can only be emitted once until the page is reloaded and a new vue root instance is created.
 The code snippets below can be placed in different application modules.
@@ -170,7 +173,7 @@ export default {
 </template>
 ```
 
-##### Wait for events
+#### Wait for events
 
 The function `wait()` will return a promise to wait until the event was emitted.
 In this example component A will stop execution until component B was created.
@@ -206,7 +209,7 @@ export default {
 }
 ```
 
-##### Native event handlers
+#### Native event handlers
 
 Register native document events with `native()`. 
 These get emitted by document events, not the `emit()` function.
