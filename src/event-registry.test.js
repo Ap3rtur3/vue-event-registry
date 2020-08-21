@@ -22,10 +22,10 @@ const createDOMElement = () => {
 };
 
 describe('Event Registry', () => {
-    let on, native, wait, emit, history, handler;
+    let on, native, wait, emit, clear, history, handler;
 
     beforeEach(() => {
-        ({ on, native, wait, emit, history } = createEventRegistry({ debug }));
+        ({ on, native, wait, emit, clear, history } = createEventRegistry({ debug }));
         handler = jestMock.fn();
         jest.useFakeTimers();
     });
@@ -196,5 +196,21 @@ describe('Event Registry', () => {
             emit('event');
         }, 2000);
         jest.runAllTimers();
+    });
+    
+    it('clears single event handler', () => {
+        on('event', handler);
+        clear('event');
+        emit('event');
+        expect(handler).not.toHaveBeenCalled();
+    });
+    
+    it('clears all event handlers', () => {
+        on('event1', handler);
+        on('event2', handler);
+        clear();
+        emit('event1');
+        emit('event2');
+        expect(handler).not.toHaveBeenCalled();
     });
 });

@@ -1,5 +1,5 @@
 /**
- * Returns event registry object containing the functions on, emit and history
+ * Returns event registry object containing all functions
  *
  * @param Object config
  * config:
@@ -15,6 +15,11 @@ const createEventRegistry = ({
 
     // Stores history of registry actions
     const history = [];
+    
+    // Log wrapper
+    const _log = (msg, ...args) => {
+        if (debug) console.log(`[Event Registry] ${msg}`, ...args);
+    };
 
     // Returns event handlers, optionally creates empty set if none are found
     const _eventHandlers = (event) => {
@@ -65,7 +70,7 @@ const createEventRegistry = ({
         const _handler = (...args) => {
             if (uniqueEvents && _eventWasEmitted(event, true)) {
                 if (debug) {
-                    log(`Unique event "${event}" was already emitted!`);
+                    _log(`Unique event "${event}" was already emitted!`);
                 }
                 return;
             }
@@ -80,7 +85,7 @@ const createEventRegistry = ({
             if (target) {
                 target.removeEventListener(event, _handler);
             } else {
-                debug && log('DOM element does not exist anymore', event);
+                _log('DOM element does not exist anymore', event);
             }
             _pushHistory('unregister', event, _handler, [], true);
         };
@@ -89,10 +94,10 @@ const createEventRegistry = ({
     // Validate given event
     const _validateEvent = (event) => {
         if (typeof event !== 'string') {
-            debug && log(`Registered event is not a string!`, event);
+            _log(`Registered event is not a string!`, event);
             return false;
         } else if (event.length === 0) {
-            debug && log(`Registered event is empty!`, event);
+            _log(`Registered event is empty!`, event);
             return false;
         }
         return true;
@@ -104,7 +109,7 @@ const createEventRegistry = ({
             return;
 
         if (typeof handler !== 'function') {
-            debug && log('Registered handler is not a function!', handler);
+            _log('Registered handler is not a function!', handler);
             return;
         }
 
@@ -130,7 +135,7 @@ const createEventRegistry = ({
             return;
 
         if (typeof handler !== 'function') {
-            debug && log('Registered handler is not a function!', handler);
+            _log('Registered handler is not a function!', handler);
             return;
         }
 
@@ -152,14 +157,14 @@ const createEventRegistry = ({
     const emit = (event, ...args) => {
         // Do nothing if event is unique and was already emitted
         if (uniqueEvents && _eventWasEmitted(event)) {
-            debug && log(`Unique event "${event}" was already emitted!`);
+            _log(`Unique event "${event}" was already emitted!`);
             return [];
         }
 
         // Do nothing if no handlers are registered
         const handlers = _eventHandlers(event);
         if (!handlers) {
-            debug && log(`No event handlers registered for "${event}"!`);
+            _log(`No event handlers registered for "${event}"!`);
             return [];
         }
 
@@ -176,8 +181,8 @@ const createEventRegistry = ({
             ...options,
 
             // TODO: Fix waiting for native events
-            // Disable native option until tests run successful
-            native: false, 
+            // HACK: Disable native option until tests run successful
+            native: false,
             element: window,
         };
         const handler = (...args) => {
@@ -185,7 +190,7 @@ const createEventRegistry = ({
                 removeHandler();
             }
             resolve(...args);
-        }
+        };
 
         // Listen for event and resolve promise on emit
         if (opts.native) {
@@ -198,30 +203,38 @@ const createEventRegistry = ({
         if (typeof opts.timeout === 'number') {
             setTimeout(() => {
                 if (typeof removeHandler === 'function') {
-                    debug && log(`Timeout while waiting for event "${event}"!`);
+                    const timeoutError = `Timeout while waiting for event "${event}"!`
                     removeHandler();
-
                     if (opts.resolveOnTimeout) {
+                        _log(timeoutError);
                         resolve(null);
                     } else {
-                        reject(`Timeout while waiting for event "${event}"!`);
+                        reject(timeoutError);
                     }
                 }
             }, opts.timeout);
         }
     });
 
+    // Clears registry handlers
+    const clear = (event = null) => {
+        if (event) {
+            registry.delete(event);
+            _pushHistory('clear', event);
+        } else {
+            registry.clear();
+            _pushHistory('clear', null);
+        }
+    };
+
     return {
         on,
         native,
         wait,
         emit,
+        clear,
         history: () => Array.from(history),
     };
-};
-
-const log = (msg, ...args) => {
-    console.log(`[Event Registry] ${msg}`, ...args);
 };
 
 module.exports = {

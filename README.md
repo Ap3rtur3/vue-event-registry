@@ -231,6 +231,19 @@ export default {
 }
 ```
 
+#### Clear all event handlers
+
+The event handlers of a registry can be removed by using `clear()`.
+
+```javascript
+export default {
+    destroyed() {
+        this.$events.clear(); // Removes all event handlers
+        this.$events.clear('event'); // Removes handlers for given event
+    }
+}
+```
+
 ## Usage
 
 After the setup all vue instances have access to the configured event registries.
