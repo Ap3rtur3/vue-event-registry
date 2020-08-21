@@ -290,6 +290,13 @@ Emits event, executes registered handlers and returns array of executed handlers
 |event|string|_required_|Name of event|
 |args|arguments||Optional arguments which get passed to event handler|
 
+#### clear([event])
+Removes handlers for event if given or all handlers if not
+
+|Parameter|Type|Default|Description|
+|---|---|---|---|
+|event|string|null|Name of event|
+
 #### history()
 Returns array of all registry interactions
 
