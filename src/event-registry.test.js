@@ -35,6 +35,7 @@ describe('Event Registry', () => {
         expect(native).toBeDefined();
         expect(wait).toBeDefined();
         expect(emit).toBeDefined();
+        expect(clear).toBeDefined();
         expect(history).toBeDefined();
     });
 
@@ -199,10 +200,14 @@ describe('Event Registry', () => {
     });
     
     it('clears single event handler', () => {
-        on('event', handler);
-        clear('event');
-        emit('event');
+        const handler2 = jestMock.fn();
+        on('event1', handler);
+        on('event2', handler2);
+        clear('event1');
+        emit('event1');
+        emit('event2');
         expect(handler).not.toHaveBeenCalled();
+        expect(handler2).toHaveBeenCalled();
     });
     
     it('clears all event handlers', () => {

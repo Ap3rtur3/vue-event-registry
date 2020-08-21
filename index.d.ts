@@ -21,6 +21,7 @@ export interface EventRegistry {
     native(event: string, handler: Function, target?: EventTarget): RemoveEventListenerCallback;
     wait(event: string, options?: WaitOptions): Promise<any | ErrorMessage>;
     emit(event: string, ...args: any): Array<any>;
+    clear(event?: string): void;
     history(): Array<object>;
 }
 

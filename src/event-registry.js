@@ -218,12 +218,12 @@ const createEventRegistry = ({
 
     // Clears registry handlers
     const clear = (event = null) => {
-        if (event) {
-            registry.delete(event);
-            _pushHistory('clear', event);
-        } else {
+        if (event === null) {
             registry.clear();
             _pushHistory('clear', null);
+        } else {
+            registry.delete(event);
+            _pushHistory('clear', event);
         }
     };
 
