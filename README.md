@@ -9,28 +9,27 @@ You can also register handlers for unique events, which get called instantly aft
 if the event was already emitted. Unique events only get emitted once.
 It doesn't matter when a component is loaded, its unique event handlers get fired properly.
 
-Native document events do not execute event handlers registered with `on()`.
-Use `native()` to register event handlers for document events like "click" for example.
+### Features
+
+* Add and remove event handlers
+* Unique events
+* Wait for events
+* Promises 
+* Native document events
+* Zero dependencies
 
 ### Why
 
 The main purpose of this plugin is to handle events between independent application modules or components, 
-which get loaded at different times. I wanted a way to handle events from another module, even though they already
+which get loaded at different times and can cause concurrency problems. 
+This plugin provides a way to handle events from another module, even though they already
 have been emitted, that's what the unique event registry is for.
 
 Components can also pause execution and wait until some events have been fired or continue without them,
-making it easy to define module execution orders, if they loosely depend on another.
+making it easy to define module execution orders, if they depend on another.
 
 Another core functionality is the way event handlers get removed by calling the remove function, 
 which gets returned by registering an event handler.
-
-### Features
-
-* Add and remove event handlers
-* Promises 
-* Asynchronous registration of unique events
-* Native document events
-* Zero dependencies
 
 ## Setup
 
@@ -302,8 +301,8 @@ Returns array of all registry interactions
 
 ## Development 
 
-If you want to contribute, then fork and checkout the repository.
-Navigate to local files and install dev dependencies:
+If you want to contribute, then fork and checkout the repository on develop.
+Navigate to the project and install dev dependencies:
 
 ```bash
 npm install
@@ -317,11 +316,6 @@ npm run test
 ```
 
 Push your changes to a feature branch and create a pull request.
-
-## Todo 
-
-* More tests
-* More examples / use cases
 
 ## License
 
